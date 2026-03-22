@@ -33,4 +33,5 @@ coverage/
 
 keys.txt
 .agents/
-.skills-lock.json
+skills-lock.json
+package-lock.json
