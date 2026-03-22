@@ -2,7 +2,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/JustWhisper.git
+git clone https://github.com/vivekupasani/JustWhisper.git
 cd JustWhisper
 
 # Install dependencies
