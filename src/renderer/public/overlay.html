@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'" />
+    <title>JustWhisper</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        background: transparent;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+      }
+      .container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .pill {
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 6px 10px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      }
+      .dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #666;
+        transition: transform 0.04s ease-out, background 0.08s ease-out;
+      }
+      .dot.active { background: #c4ffd9; }
+      .dot.medium { background: #d8f0e1; }
+
+      .processing .dot {
+        background: #888;
+        animation: pulse 0.8s ease-in-out infinite;
+      }
+      .processing .dot:nth-child(1) { animation-delay: 0s; }
+      .processing .dot:nth-child(2) { animation-delay: 0.1s; }
+      .processing .dot:nth-child(3) { animation-delay: 0.2s; }
+      .processing .dot:nth-child(4) { animation-delay: 0.3s; }
+      .processing .dot:nth-child(5) { animation-delay: 0.4s; }
+      .processing .dot:nth-child(6) { animation-delay: 0.5s; }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 0.3; transform: scale(0.6); }
+        50% { opacity: 1; transform: scale(1); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="pill" id="pill">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+    <script>
+      const NUM_DOTS = 6;
+      const MIN_SCALE = 0.6;
+      const MAX_SCALE = 1.0;
+
+      const pill = document.getElementById('pill');
+      const dots = document.querySelectorAll('.dot');
+
+      let audioContext = null;
+      let analyser = null;
+      let stream = null;
+      let animationId = null;
+      let isProcessing = false;
+
+      async function startAudioAnalysis() {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          audioContext = new AudioContext();
+          const source = audioContext.createMediaStreamSource(stream);
+          analyser = audioContext.createAnalyser();
+          analyser.fftSize = 32;
+          analyser.smoothingTimeConstant = 0.3;
+          source.connect(analyser);
+
+          const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+          function updateLevels() {
+            if (!analyser || isProcessing) return;
+            analyser.getByteFrequencyData(dataArray);
+
+            const bandSize = Math.floor(dataArray.length / NUM_DOTS);
+
+            dots.forEach((dot, i) => {
+              const start = i * bandSize;
+              let sum = 0;
+              for (let j = start; j < start + bandSize && j < dataArray.length; j++) {
+                sum += dataArray[j];
+              }
+              const avg = sum / bandSize / 255;
+              const scale = MIN_SCALE + avg * (MAX_SCALE - MIN_SCALE) * 3;
+              const finalScale = Math.min(MAX_SCALE, scale);
+
+              dot.style.transform = `scale(${finalScale})`;
+              dot.classList.remove('active', 'medium');
+              if (finalScale > 0.8) {
+                dot.classList.add('active');
+              } else if (finalScale > 0.65) {
+                dot.classList.add('medium');
+              }
+            });
+
+            animationId = requestAnimationFrame(updateLevels);
+          }
+
+          updateLevels();
+        } catch (err) {
+          console.error('Audio error:', err);
+        }
+      }
+
+      function stopAudioAnalysis() {
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+          stream = null;
+        }
+        if (audioContext) {
+          audioContext.close();
+          audioContext = null;
+        }
+        analyser = null;
+      }
+
+      function setProcessing(processing) {
+        isProcessing = processing;
+        if (processing) {
+          stopAudioAnalysis();
+          pill.classList.add('processing');
+          dots.forEach(dot => {
+            dot.style.transform = '';
+            dot.classList.remove('active', 'medium');
+          });
+        } else {
+          pill.classList.remove('processing');
+          startAudioAnalysis();
+        }
+      }
+
+      if (window.electronAPI && window.electronAPI.onOverlayStatus) {
+        window.electronAPI.onOverlayStatus((status) => {
+          setProcessing(status === 'processing');
+        });
+      }
+
+      startAudioAnalysis();
+    </script>
+  </body>
+</html>
