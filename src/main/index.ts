@@ -18,7 +18,7 @@ function createWindow(): void {
     show: true, // Show immediately on launch
     frame: true,
     resizable: false,
-    title: 'JustWhisper',
+    title: 'Whispy',
     skipTaskbar: false, // Show in taskbar
     webPreferences: {
       preload: join(__dirname, '../preload/index.mjs'),

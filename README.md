@@ -2,8 +2,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/vivekupasani/JustWhisper.git
-cd JustWhisper
+git clone https://github.com/vivekupasani/whispy.git
+cd whispy
 
 # Install dependencies
 npm install
@@ -14,7 +14,7 @@ npm run dev
 
 ## First-Time Configuration
 
-1. Launch JustWhisper
+1. Launch Whispy
 2. Click the **Settings** button
 3. Enter your API keys:
    - Paste your Groq API key in the first field
@@ -24,27 +24,27 @@ npm run dev
 
 ## Permissions
 
-JustWhisper requires these macOS permissions to function:
+Whispy requires these macOS permissions to function:
 
 ### Accessibility (Required)
 
-This allows JustWhisper to detect global hotkeys and simulate the paste command.
+This allows Whispy to detect global hotkeys and simulate the paste command.
 
 1. Open **System Settings** > **Privacy & Security** > **Accessibility**
 2. Click the lock icon and authenticate
-3. Enable the toggle for **JustWhisper**
+3. Enable the toggle for **Whispy**
 
-If JustWhisper isn't listed:
+If Whispy isn't listed:
 1. Click the **+** button
-2. Navigate to `/Applications/JustWhisper.app` (or your dev build location)
+2. Navigate to `/Applications/Whispy.app` (or your dev build location)
 3. Add and enable it
 
 ### Microphone (Required)
 
-This allows JustWhisper to record your voice.
+This allows Whispy to record your voice.
 
 1. Open **System Settings** > **Privacy & Security** > **Microphone**
-2. Enable the toggle for **JustWhisper**
+2. Enable the toggle for **Whispy**
 
 If you're running from source:
 - Grant permission to **Terminal** or your IDE instead

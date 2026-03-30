@@ -1,7 +1,7 @@
 {
-  "name": "justwhisper",
+  "name": "whispy",
   "version": "1.0.0",
-  "description": "JustWhisper - Serverless AI Dictation - Voice to refined text using Groq Whisper and OpenAI",
+  "description": "Whispy - Serverless AI Dictation - Voice to refined text using Groq Whisper and OpenAI",
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
@@ -30,8 +30,8 @@
     "url": ""
   },
   "build": {
-    "appId": "com.justwhisper.app",
-    "productName": "JustWhisper",
+    "appId": "com.whispy.app",
+    "productName": "Whispy",
     "directories": {
       "output": "release"
     },

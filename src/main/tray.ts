@@ -26,7 +26,7 @@ export function setupTray(mainWindow: BrowserWindow): void {
   }
 
   tray = new Tray(icon)
-  tray.setToolTip('JustWhisper - AI Dictation')
+  tray.setToolTip('Whispy - AI Dictation')
 
   const contextMenu = Menu.buildFromTemplate([
     {
@@ -96,7 +96,7 @@ export function updateTrayIcon(isRecording: boolean): void {
   if (!tray) return
 
   // Could update icon to show recording state
-  tray.setToolTip(isRecording ? 'JustWhisper - Recording...' : 'JustWhisper - AI Dictation')
+  tray.setToolTip(isRecording ? 'Whispy - Recording...' : 'Whispy - AI Dictation')
 }
 
 export { tray }
