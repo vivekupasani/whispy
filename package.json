@@ -32,6 +32,7 @@
   "build": {
     "appId": "com.whispy.app",
     "productName": "Whispy",
+    "npmRebuild": false,
     "directories": {
       "output": "release"
     },
